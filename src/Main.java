@@ -1,60 +1,93 @@
+import java.util.Scanner;
+
 /**
- * =====================================================================
- * Лабораторная работа №1: Списки. Стеки. Очереди.
- * =====================================================================
- * Вариант 21:
- * Определить, расположены ли элементы в двусвязном списке симметричным образом.
- * =====================================================================
+ * Главный класс.
+ * Читает список целых чисел с клавиатуры (через Scanner)
+ * и проверяет, является ли он симметричным (задача 21).
+ *
+ * Защита от некорректного ввода:
+ * - принимаются только целые числа
+ * - ограничение на количество элементов
+ * - защита от пустого ввода
  */
-
-
 public class Main {
+
+    // максимальное количество элементов в списке
+    private static final int MAX_SIZE = 1000;
+
     public static void main(String[] args) {
-        System.out.println("Задача №21: проверка симметричности двусвязного списка\n");
+        Scanner scanner = new Scanner(System.in);
 
-        // тест 1: симметричный (нечетное количество)
-        DoublyLinkedList list1 = new DoublyLinkedList();
-        list1.add(1);
-        list1.add(2);
-        list1.add(3);
-        list1.add(2);
-        list1.add(1);
-        System.out.print("Список: ");
-        list1.printList();
-        System.out.println("Симметричный? " + (list1.isSymmetric() ? "да" : "нет") + "\n");
+        System.out.println("Задача 21: проверка симметричности двусвязного списка\n");
 
-        // тест 2: симметричный (четное количество)
-        DoublyLinkedList list2 = new DoublyLinkedList();
-        list2.add(1);
-        list2.add(2);
-        list2.add(2);
-        list2.add(1);
-        System.out.print("Список: ");
-        list2.printList();
-        System.out.println("Симметричный? " + (list2.isSymmetric() ? "да" : "нет") + "\n");
+        // --- шаг 1: ввод количества элементов ---
+        int n = readSize(scanner);
 
-        // тест 3: не симметричный
-        DoublyLinkedList list3 = new DoublyLinkedList();
-        list3.add(1);
-        list3.add(2);
-        list3.add(3);
-        list3.add(4);
-        list3.add(5);
-        System.out.print("Список: ");
-        list3.printList();
-        System.out.println("Симметричный? " + (list3.isSymmetric() ? "да" : "нет") + "\n");
+        // --- шаг 2: ввод самих элементов ---
+        DoublyLinkedList list = new DoublyLinkedList();
 
-        // тест 4: один элемент
-        DoublyLinkedList list4 = new DoublyLinkedList();
-        list4.add(42);
-        System.out.print("Список: ");
-        list4.printList();
-        System.out.println("Симметричный? " + (list4.isSymmetric() ? "да" : "нет") + "\n");
+        if (n > 0) {
+            System.out.println("Введите " + n + " целых чисел:");
+            for (int i = 0; i < n; i++) {
+                int value = readValue(scanner, i + 1);
+                list.add(value);
+            }
+        }
 
-        // тест 5: пустой список
-        DoublyLinkedList list5 = new DoublyLinkedList();
-        System.out.print("Список: ");
-        list5.printList();
-        System.out.println("Симметричный? " + (list5.isSymmetric() ? "да" : "нет") + "\n");
+        // --- шаг 3: вывод результата ---
+        System.out.print("\nВведённый список: ");
+        list.printList();
+        System.out.println("Симметричный? " + (list.isSymmetric() ? "да" : "нет"));
+
+        scanner.close();
+    }
+
+    /**
+     * Читает количество элементов с проверками:
+     * - число не может быть отрицательным
+     * - число не может быть больше MAX_SIZE
+     * @param scanner - объект Scanner для чтения
+     * @return корректное количество элементов
+     */
+    private static int readSize(Scanner scanner) {
+        while (true) {
+            System.out.print("Введите количество элементов (0.." + MAX_SIZE + "): ");
+
+            if (!scanner.hasNextInt()) {
+                System.out.println("Ошибка: введите целое число.");
+                scanner.next(); // пропускаем некорректный ввод
+                continue;
+            }
+
+            int n = scanner.nextInt();
+
+            if (n < 0) {
+                System.out.println("Ошибка: количество не может быть отрицательным.");
+            } else if (n > MAX_SIZE) {
+                System.out.println("Ошибка: слишком много элементов (максимум " + MAX_SIZE + ").");
+            } else {
+                return n;
+            }
+        }
+    }
+
+    /**
+     * Читает одно значение элемента с проверками.
+     * @param scanner - объект Scanner для чтения
+     * @param index - номер элемента (для сообщения)
+     * @return корректное целое число
+     */
+    private static int readValue(Scanner scanner, int index) {
+        while (true) {
+            System.out.print("Элемент " + index + ": ");
+
+            if (!scanner.hasNextInt()) {
+                System.out.println("Ошибка: введите целое число.");
+                scanner.next(); // пропускаем некорректный ввод
+                continue;
+            }
+
+            return scanner.nextInt();
+        }
     }
 }
