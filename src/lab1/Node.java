@@ -1,4 +1,4 @@
-
+package lab1;
 
 public class Node {
     int data;      // значение узла

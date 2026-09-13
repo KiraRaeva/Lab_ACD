@@ -1,9 +1,11 @@
+package lab1;
+
 /**
  * Главный класс.
  * Читает список целых чисел с клавиатуры (через System.in.read)
  * и проверяет, является ли он симметричным (задача 21).
  */
-public class Main {
+public class lab1 {
 
     // максимальное количество элементов в списке
     private static final int MAX_SIZE = 1000;
