@@ -3,33 +3,42 @@ package lab5;
 /**
  * Класс для чтения данных из System.in.
  * Без библиотек — только System.in.read().
- *
- * Проверки:
- * - СНИЛС: ровно 11 цифр
- * - ФИО: не пустая строка, только буквы и пробелы
- * - команды меню: 1..7
+ * Проверки.
  */
 public class InputReader {
 
     /**
-     * Читает одну строку из System.in.
+     /**
+     * Читает одну строку из System.in, собирая байты вручную.
      */
     public static String readLine() throws Exception {
-        StringBuilder sb = new StringBuilder();
+        byte[] buffer = new byte[1024];
+        int bytesRead = 0;
         int ch;
+
         while ((ch = System.in.read()) != -1) {
             if (ch == '\n') {
                 break;
             }
             if (ch != '\r') {
-                sb.append((char) ch);
+                // Если буфер переполнился, расширяем его
+                if (bytesRead >= buffer.length) {
+                    byte[] newBuffer = new byte[buffer.length * 2];
+                    System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
+                    buffer = newBuffer;
+                }
+                buffer[bytesRead++] = (byte) ch;
             }
         }
-        if (ch == -1 && sb.length() == 0) {
+
+        if (ch == -1 && bytesRead == 0) {
             return null;
         }
-        return sb.toString();
+
+        // Преобразуем накопленные байты в строку UTF-8
+        return new String(buffer, 0, bytesRead, "UTF-8");
     }
+
 
     /**
      * Читает СНИЛС (11 цифр).
@@ -108,13 +117,26 @@ public class InputReader {
     /**
      * Проверяет, что строка — корректное ФИО.
      */
+    /**
+     * Проверяет, что строка — корректное ФИО (только русские/английские буквы и пробелы).
+     */
     private static boolean isFio(String s) {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            boolean isLetter = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
-                    || (c >= 'А' && c <= 'Я') || (c >= 'а' && c <= 'я');
+
+            // Английские буквы A-Z и a-z
+            boolean isEnglishLetter = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+
+            // Основной диапазон русских букв А-Я и а-я
+            boolean isRussianLetter = (c >= 'А' && c <= 'Я') || (c >= 'а' && c <= 'я');
+
+
+
+            // Пробел
             boolean isSpace = (c == ' ');
-            if (!isLetter && !isSpace) {
+
+            // Если символ не подошёл ни под одно правило — строка невалидна
+            if (!isEnglishLetter && !isRussianLetter  && !isSpace) {
                 return false;
             }
         }

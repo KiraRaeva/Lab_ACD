@@ -1,18 +1,5 @@
 package lab5;
 
-/**
- * Главный класс лабораторной работы №5.
- * Хэш-таблица с разрешением коллизий через BST.
- *
- * Меню:
- * 1 — Добавить элемент (СНИЛС + ФИО)
- * 2 — Найти элемент по СНИЛС
- * 3 — Удалить элемент по СНИЛС
- * 4 — Вывести всю таблицу
- * 5 — Рехэшировать (принудительно)
- * 6 — Показать статистику
- * 7 — Выход
- */
 public class Lab5 {
 
     public static void main(String[] args) throws Exception {
@@ -24,26 +11,20 @@ public class Lab5 {
         System.out.println("Значение: ФИО.");
         System.out.println("Хэш-функция: деление (key % size).");
         System.out.println("Коллизии: BST в каждой ячейке.");
-        System.out.println("Коэффициент заполнения: 0.75.\n");
+        System.out.println("Коэффициент заполнения для рехэша: 0.75.\n");
 
         HashTable table = new HashTable();
 
-        // ============================================================
-        // ТЕСТОВЫЕ ДАННЫЕ (9 элементов)
-        // После добавления 10-го сработает рехэширование
-        // ============================================================
-        table.insert("12345678900", "Кира Сергеевна Раева");
-        table.insert("12345678901", "Лариса Васильевна Уварова");
-        table.insert("12345678902", "Владос Константинович Потаенков");
-        table.insert("12345678903", "К К К");
-        table.insert("12345678904", "С С С");
-        table.insert("12345678905", "Уилл Байерс");
-        table.insert("12345678906", "Стив Харингтон");
-        table.insert("12345678907", "Лукас");
-        table.insert("12345678908", "Дастин");
+        // Тестовые данные
+        table.insert("12345678900", "Потаенков Владос");
+        table.insert("12345678901", "Раева Кира");
+        table.insert("12345678902", "Собака Пиратость");
+        table.insert("12345678903", "Рио Киа 164");
+        table.insert("12345678904", "Тайлер Дерден");
 
-        System.out.println("Загружено 9 тестовых элементов.");
-        System.out.println("При добавлении 10-го сработает рехэширование.\n");
+        //12345678911 и 12345678922 - для коллизии
+        System.out.println("Стартовый размер таблицы: 11.");
+        System.out.println("Добавьте еще элементы, чтобы сработало автоматическое рехэширование.\n");
 
         while (true) {
             printMenu();
@@ -57,14 +38,12 @@ public class Lab5 {
             System.out.println();
 
             if (choice == 1) {
-                // добавить
                 String snils = InputReader.readSnils();
                 String fio = InputReader.readFio();
                 table.insert(snils, fio);
                 System.out.println("Элемент добавлен.\n");
 
             } else if (choice == 2) {
-                // найти
                 String snils = InputReader.readSnils();
                 String fio = table.search(snils);
                 if (fio == null) {
@@ -74,7 +53,6 @@ public class Lab5 {
                 }
 
             } else if (choice == 3) {
-                // удалить
                 String snils = InputReader.readSnils();
                 boolean removed = table.remove(snils);
                 if (removed) {
@@ -84,32 +62,25 @@ public class Lab5 {
                 }
 
             } else if (choice == 4) {
-                // вывести таблицу
                 table.print();
                 System.out.println();
 
             } else if (choice == 5) {
-                // рехэшировать
                 table.rehash();
                 System.out.println("Рехэширование выполнено. Новый размер: " + table.getSize() + "\n");
 
             } else if (choice == 6) {
-                // статистика
                 System.out.println("Размер таблицы: " + table.getSize());
                 System.out.println("Количество элементов: " + table.getCount());
                 System.out.printf("Коэффициент заполнения: %.2f%n%n", table.getLoadFactor());
 
             } else if (choice == 7) {
-                // выход
                 System.out.println("Выход.");
                 break;
             }
         }
     }
 
-    /**
-     * Выводит меню.
-     */
     private static void printMenu() {
         System.out.println("----------------------------------------");
         System.out.println("1 — Добавить элемент");

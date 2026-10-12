@@ -1,27 +1,17 @@
 package lab5;
 
 /**
- * Хэш-таблица.
- *
- * Ключ — СНИЛС (11 цифр).
- * Значение — ФИО.
- * Хэш-функция — деление: key % size.
- * Коллизии разрешаются через BST.
- *
- * При заполнении > 0.75 — рехэширование.
+ * Хэш-таблица с разрешением коллизий через BST.
  */
 public class HashTable {
 
-    private BST[] table;       // массив BST
-    private int size;          // текущий размер таблицы
-    private int count;         // количество элементов
+    private BST[] table;
+    private int size;
+    private int count;
     private static final double LOAD_FACTOR = 0.75;
 
-    /**
-     * Конструктор: начальный размер 10.
-     */
     public HashTable() {
-        this.size = 10;
+        this.size = 11; // Начальный размер — простое число
         this.table = new BST[size];
         this.count = 0;
     }
@@ -38,19 +28,11 @@ public class HashTable {
         return (double) count / size;
     }
 
-    // ================================================================
-    // ХЭШ-ФУНКЦИЯ (деление)
-    // ================================================================
-    /**
-     * Хэш-функция деления.
-     * Преобразует СНИЛС (строку цифр) в число и берёт остаток от деления.
-     */
     private int hash(String key) {
         long number = 0;
         for (int i = 0; i < key.length(); i++) {
             number = number * 10 + (key.charAt(i) - '0');
         }
-        // остаток от деления, всегда положительный
         int index = (int) (number % size);
         if (index < 0) {
             index += size;
@@ -58,9 +40,6 @@ public class HashTable {
         return index;
     }
 
-    // ================================================================
-    // ВСТАВКА
-    // ================================================================
     public void insert(String key, String value) {
         int index = hash(key);
 
@@ -73,26 +52,33 @@ public class HashTable {
             count++;
         }
 
-        // проверка коэффициента заполнения
         if (getLoadFactor() >= LOAD_FACTOR) {
             rehash();
         }
     }
 
-    // ================================================================
-    // ПОИСК
-    // ================================================================
+    private void insertWithoutRehash(String key, String value) {
+        int index = hash(key);
+
+        if (table[index] == null) {
+            table[index] = new BST();
+        }
+
+        boolean added = table[index].insert(key, value);
+        if (added) {
+            count++;
+        }
+    }
+
     public String search(String key) {
         int index = hash(key);
         if (table[index] == null) {
             return null;
         }
-        return table[index].search(key);
+        Node node = table[index].search(key);
+        return (node == null) ? null : node.value;
     }
 
-    // ================================================================
-    // УДАЛЕНИЕ
-    // ================================================================
     public boolean remove(String key) {
         int index = hash(key);
         if (table[index] == null) {
@@ -108,12 +94,8 @@ public class HashTable {
         return removed;
     }
 
-    // ================================================================
-    // РЕХЭШИРОВАНИЕ
-    // ================================================================
     /**
-     * Увеличивает размер таблицы до следующего простого числа
-     * и перераспределяет все элементы.
+     * Рехэширование. Увеличивает таблицу и перевставляет элементы.
      */
     public void rehash() {
         int newSize = nextPrime(size * 2);
@@ -124,29 +106,28 @@ public class HashTable {
         size = newSize;
         count = 0;
 
-        // перебираем все элементы старой таблицы
         for (int i = 0; i < oldSize; i++) {
-            if (oldTable[i] != null) {
-                reinsertAll(oldTable[i].getRoot());
+            if (oldTable[i] != null && !oldTable[i].isEmpty()) {
+                // Избавились от костыльного массива-стека fixed-size, используем чистую рекурсию
+                traverseAndReinsert(oldTable[i].getRoot());
             }
         }
     }
 
     /**
-     * Рекурсивно обходит BST и вставляет все элементы в новую таблицу.
+     * Рекурсивный обход старого дерева для перевставки
      */
-    private void reinsertAll(Node node) {
-        if (node == null) {
-            return;
-        }
-        reinsertAll(node.left);
-        insert(node.key, node.value);
-        reinsertAll(node.right);
+    private void traverseAndReinsert(Node node) {
+        if (node == null) return;
+
+        // Вставляем текущий
+        insertWithoutRehash(node.key, node.value);
+
+        // Идем к детям
+        traverseAndReinsert(node.left);
+        traverseAndReinsert(node.right);
     }
 
-    /**
-     * Находит следующее простое число >= n.
-     */
     private int nextPrime(int n) {
         while (!isPrime(n)) {
             n++;
@@ -154,9 +135,6 @@ public class HashTable {
         return n;
     }
 
-    /**
-     * Проверяет, является ли число простым.
-     */
     private boolean isPrime(int n) {
         if (n < 2) return false;
         if (n == 2) return true;
@@ -167,9 +145,6 @@ public class HashTable {
         return true;
     }
 
-    // ================================================================
-    // ВЫВОД
-    // ================================================================
     public void print() {
         System.out.println("Размер таблицы: " + size);
         System.out.println("Количество элементов: " + count);
