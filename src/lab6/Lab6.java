@@ -16,7 +16,7 @@ public class Lab6 {
 
         System.out.println("Сначала идут отсортированные чётные,");
         System.out.println("затем — отсортированные нечётные.");
-        System.out.println("Вводятся только положительные числа.\n");
+        System.out.println("Вводятся  положительные или отрицательные целые числа.\n");
 
         // 1. ввод массива
         int[] arr = InputReader.readArray();
@@ -40,9 +40,7 @@ public class Lab6 {
         printEvenOdd(result, false);
     }
 
-    /**
-     * Выводит массив в формате [1, 2, 3, 4].
-     */
+
     private static void printArray(int[] arr) {
         System.out.print("[");
         for (int i = 0; i < arr.length; i++) {

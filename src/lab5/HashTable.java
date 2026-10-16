@@ -108,7 +108,7 @@ public class HashTable {
 
         for (int i = 0; i < oldSize; i++) {
             if (oldTable[i] != null && !oldTable[i].isEmpty()) {
-                // Избавились от костыльного массива-стека fixed-size, используем чистую рекурсию
+
                 traverseAndReinsert(oldTable[i].getRoot());
             }
         }
@@ -123,7 +123,7 @@ public class HashTable {
         // Вставляем текущий
         insertWithoutRehash(node.key, node.value);
 
-        // Идем к детям
+
         traverseAndReinsert(node.left);
         traverseAndReinsert(node.right);
     }
