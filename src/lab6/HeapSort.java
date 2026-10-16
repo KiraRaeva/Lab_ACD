@@ -27,7 +27,7 @@ public class HeapSort {
                 largest = right;
             }
 
-            // если корень уже максимальный — выходим
+
             if (largest == i) {
                 break;
             }
@@ -44,7 +44,7 @@ public class HeapSort {
 
 
     public static void buildHeap(int[] arr, int n) {
-        // начинаем с последнего родителя
+        // Вторая половина элементов массива — это самые нижние «листья» дерева, у которых физически нет детей.
         for (int i = n / 2 - 1; i >= 0; i--) {
             heapify(arr, n, i);
         }
@@ -55,10 +55,10 @@ public class HeapSort {
      * Сортирует массив по возрастанию пирамидальной сортировкой.
      */
     public static void heapSort(int[] arr, int n) {
-        // 1. строим max-heap
+
         buildHeap(arr, n);
 
-        // 2. по одному извлекаем максимум
+        //  по одному извлекаем максимум
         for (int i = n - 1; i > 0; i--) {
             // меняем корень (максимум) с последним
             int temp = arr[0];

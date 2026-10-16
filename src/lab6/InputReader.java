@@ -117,7 +117,7 @@ public class InputReader {
         int n = readSize();
         int[] arr = new int[n];
 
-        System.out.println("Введите " + n + " целых чисел (могут быть отрицательные):");
+        System.out.println("Введите " + n + " целых чисел:");
         for (int i = 0; i < n; i++) {
             arr[i] = readElement(i + 1);
         }
